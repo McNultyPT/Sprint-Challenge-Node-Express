@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         res.status(200).json(actions);
     } catch(error) {
         console.log(error);
-        res.status(500).json({ message: 'Error retrieving the actions.' });
+        res.status(500).json({ error: 'Error retrieving the actions.' });
     }
 });
 
@@ -21,11 +21,26 @@ router.get('/:id', async (req, res) => {
         if (action) {
             res.status(200).json(action);
         } else {
-            res.status(404).json({ message: 'Action not found.' });
+            res.status(404).json({ errorMessage: 'An action with that ID does not exist.' });
         }
     } catch(error) {
         console.log(error);
-        res.status(500).json({ message: 'Error retrieving the action.' });
+        res.status(500).json({ error: 'Error retrieving the action.' });
+    }
+});
+
+router.post('/', async (req, res) => {
+    const actionInfo = req.body;
+
+    if (!actionInfo.project_id || !actionInfo.description || !actionInfo.notes)
+        return res.status(400).json({ errorMessage: 'Please provide a description, notes and a project ID.' });
+
+    try {
+        const action = await Actions.insert(actionInfo);
+        res.status(201).json(action);
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ error: 'There was an error while saving this action.' });
     }
 });
 
