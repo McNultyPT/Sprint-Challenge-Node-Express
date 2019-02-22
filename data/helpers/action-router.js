@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
     const actionInfo = req.body;
 
     if (!actionInfo.project_id || !actionInfo.description || !actionInfo.notes)
-        return res.status(400).json({ errorMessage: 'Please provide a description, notes and a project ID.' });
+        return res.status(400).json({ message: 'Please provide a description, notes and a project ID.' });
 
     try {
         const action = await Actions.insert(actionInfo);
@@ -56,6 +56,25 @@ router.delete('/:id', async (req, res) => {
     } catch(error) {
         console.log(error);
         res.status(500).json({ error: 'The action could not be removed.' });
+    }
+});
+
+router.put('/:id', async (req, res) => {
+    const actionInfo = req.body;
+
+    if (!actionInfo.project_id || !actionInfo.description || !actionInfo.notes)
+        return status(400).json({ message: 'Please provide a description, notes and a project ID.' });
+
+    try {
+        const action = await Actions.update(req.params.id, req.body);
+        if (action) {
+            res.status(200).json(action);
+        } else {
+            res.status(404).json({ errorMessage: 'An action with that ID does not exist.' });
+        }
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ error: 'The action could not be modified.' });
     }
 });
 
